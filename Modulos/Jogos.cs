@@ -15,5 +15,6 @@ namespace Ubibot.Modulos {
         public string Status;
         public string Maintenance;
         public string[] ImpactedFeatures;
+
     }
 }

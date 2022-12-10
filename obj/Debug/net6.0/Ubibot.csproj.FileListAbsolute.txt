@@ -26,3 +26,5 @@ C:\Users\GabrielTadeuGeromel\source\repos\Ubibot\obj\Debug\net6.0\refint\Ubibot.
 C:\Users\GabrielTadeuGeromel\source\repos\Ubibot\obj\Debug\net6.0\Ubibot.pdb
 C:\Users\GabrielTadeuGeromel\source\repos\Ubibot\obj\Debug\net6.0\Ubibot.genruntimeconfig.cache
 C:\Users\GabrielTadeuGeromel\source\repos\Ubibot\obj\Debug\net6.0\ref\Ubibot.dll
+C:\Users\GabrielTadeuGeromel\source\repos\Ubibot\bin\Debug\net6.0\System.Net.Http.Formatting.dll
+C:\Users\GabrielTadeuGeromel\source\repos\Ubibot\bin\Debug\net6.0\Newtonsoft.Json.Bson.dll
