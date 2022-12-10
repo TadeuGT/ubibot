@@ -7,16 +7,12 @@ using System.Net.Http;
 using Discord;
 using Newtonsoft.Json;
 using System.Net;
+using System.Runtime.CompilerServices;
 
 namespace Ubibot.Modulos {
     internal class API {
 
-        //https://game-status-api.ubisoft.com/v1/instances
-        //?appIds=e3d5ea9e-50bd-43b7-88bf-39794f4e3d40,
-        //fb4cc4c9-2063-461d-a1e8-84a7d36525fc,
-        //4008612d-3baf-49e4-957a-33066726a7bc
-
-        public object listarJogos() {
+        public object ListarJogos() {
             string url = "https://game-status-api.ubisoft.com/v1/instances";
             HttpClient client = new HttpClient();
             using (HttpResponseMessage response = client.GetAsync(url).Result) {
@@ -43,40 +39,41 @@ namespace Ubibot.Modulos {
 
         }
 
-        public string getJogos() {
-            return getStatus();
+        public string GetJogos(int num) {
+            return GetStatus(num);
         }
 
-        static string getStatus() {
-
-            string url = "https://game-status-api.ubisoft.com/v1/instances?appIds=e3d5ea9e-50bd-43b7-88bf-39794f4e3d40";
-            HttpClient client = new HttpClient();
-            using (HttpResponseMessage response = client.GetAsync(url).Result) {
-                using (HttpContent content = response.Content) {
-                    var json = content.ReadAsStringAsync().Result;
-                                                                 #pragma warning disable CS8600 // Conversão de literal nula ou possível valor nulo em tipo não anulável.
-                    List<Jogos> games = JsonConvert.DeserializeObject<List<Jogos>>(json);
-                                                                 #pragma warning restore CS8600 // Conversão de literal nula ou possível valor nulo em tipo não anulável.
-
-                                                                 #pragma warning disable CS8602 // Desreferência de uma ref possivelmente nula.
-                    foreach (var jogo in games) {
-                        //Console.WriteLine("--- Status de " + jogo.Name);
-                        Console.WriteLine("AppID: " + jogo.AppID);
-                        Console.WriteLine("Name: " + jogo.Name);
-                        Console.WriteLine("Plataform: " + jogo.Platform);
-                        Console.WriteLine("Status: " + jogo.Status);
-                        Console.WriteLine("Maintenance: " + jogo.Maintenance);
-                        //Console.WriteLine("Impacted Features: " + jogo.ImpactedFeatures[0]);
-                        Console.WriteLine("\n");
-                    }
-                                                                 #pragma warning restore CS8602 // Desreferência de uma ref possivelmente nula.
-
-                    return games[0].Status.ToString();
-
+        static string GetStatus(int num) {
+            API interno = new API();
+            List<Jogos> listaJogos = (List<Jogos>)interno.ListarJogos();
+            if (listaJogos[num].Maintenance != null) 
+                return "MANUTENÇÃO! O servidor " + listaJogos[num].Name + " se encontra em manutenção.";
+            else if (listaJogos[num].Status.ToString() == "Online") 
+                return "TUDO OK! O servidor " + listaJogos[num].Name + " está " + listaJogos[num].Status;
+            else {
+                string problemas = null;
+                for (var i = 0; i <= listaJogos[num].ImpactedFeatures[i].Length; i++) {
+                    problemas += listaJogos[num].ImpactedFeatures[i] + " ";
                 }
-
+                return "PROBLEMA! O servidor " + listaJogos[num].Name + " está apresentando problemas, afetando " + problemas;
             }
+        }
 
+        public string GetStatusGeral() {
+            API interno = new API();
+            List<Jogos> listaJogos = (List<Jogos>)interno.ListarJogos();
+            string off = null;
+            string manutencao = null;
+            for (var i = 0; i < listaJogos.Count; i++) {
+                if (listaJogos[i].Maintenance != null)
+                    manutencao += "[" + i + "]" + listaJogos[i].Name + " ";
+                if (listaJogos[i].Status != "Online")
+                    off += "["+ i +"]" + listaJogos[i].Name + " ";
+            }
+            if (off == null && manutencao == null)
+                return "Nenhum servidor da Ubisoft se encontra offline.";
+            else
+            return "Os servidores de " + off + " se encontram Offline!\nOs de " + manutencao + " estão em manutenção.";
         }
 
 
