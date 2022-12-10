@@ -3,6 +3,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
+using Ubibot.Modulos;
 
 namespace Ubibot {
     internal class Program {
@@ -22,7 +23,8 @@ namespace Ubibot {
             _commands = new CommandService();
             _services = new ServiceCollection().AddSingleton(_client).AddSingleton(_commands).BuildServiceProvider();
 
-            string token = "MTA1MDkxMzk3MTU5MjQ5NTE1NQ.GHINNa.sB4pluUC3IPop2foYZTj8-539TGO1F4Rb0Iq3Y";
+            TokenDiscord senha = new TokenDiscord();
+            string token = senha.obterSenha();
 
             _client.Log += _client_Log;
 
