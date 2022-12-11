@@ -31,7 +31,13 @@ namespace Ubibot {
             await RegisterCommandsAsync();
             await _client.LoginAsync(TokenType.Bot, token);
             await _client.StartAsync();
+
+            /* API initial = new API();
+            await initial.MonitorarAPI(_client); */
+
             await Task.Delay(-1);
+
+
         }
 
         private Task _client_Log(LogMessage arg) {

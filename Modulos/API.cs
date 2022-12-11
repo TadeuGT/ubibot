@@ -5,12 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net.Http;
 using Discord;
+using Discord.Commands;
 using Newtonsoft.Json;
 using System.Net;
 using System.Runtime.CompilerServices;
+using Discord.WebSocket;
 
 namespace Ubibot.Modulos {
-    internal class API {
+    internal class API : ModuleBase<SocketCommandContext> {
 
         public object ListarJogos() {
             string url = "https://game-status-api.ubisoft.com/v1/instances";
@@ -27,7 +29,7 @@ namespace Ubibot.Modulos {
 
                         if (games[i].Platform == "PC") {
                             listaJogos.Add(games[i]);
-                            Console.WriteLine("add " + games[i].Name + " na lista");
+                            //Console.WriteLine("add " + games[i].Name + " na lista");
                         }
 
                     }
@@ -74,6 +76,23 @@ namespace Ubibot.Modulos {
                 return "Nenhum servidor da Ubisoft se encontra offline.";
             else
             return "Os servidores de " + off + " se encontram Offline!\nOs de " + manutencao + " estão em manutenção.";
+        }
+
+        /*public async Task MonitorarAPI(DiscordSocketClient _client) {
+            ulong id = 1051150445927731281;
+            var chnl = _client.GetChannel(id) as IMessageChannel;
+            await chnl.SendMessageAsync("Announcement!");
+        } */
+
+        public void MonitorarAPI(int id, SocketCommandContext contexto) {
+            API interno = new API();
+            List<Jogos> listaJogos = (List<Jogos>)interno.ListarJogos();
+            List<Jogos> listaMonitora = new List<Jogos>();
+
+            listaMonitora.Add(listaJogos[id]);
+            contexto.Message.ReplyAsync("Agora monitorando " + listaMonitora[0].Name);
+            
+            // WIP
         }
 
 

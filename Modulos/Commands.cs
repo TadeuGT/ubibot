@@ -52,5 +52,12 @@ namespace Ubibot.Modulos {
             await ReplyAsync(a1.GetStatusGeral());
         }
 
+        [Command("monitorar")]
+        public async Task Monitorar(int id) {
+            SocketCommandContext contexto = Context;
+            API a1 = new API();
+            a1.MonitorarAPI(id, contexto);
+        }
+
     }
 }
