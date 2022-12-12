@@ -14,6 +14,8 @@ using Discord.WebSocket;
 namespace Ubibot.Modulos {
     internal class API : ModuleBase<SocketCommandContext> {
 
+        Monitor monitor = new Monitor();
+
         public object ListarJogos() {
             string url = "https://game-status-api.ubisoft.com/v1/instances";
             HttpClient client = new HttpClient();
@@ -28,6 +30,7 @@ namespace Ubibot.Modulos {
                     for (int i = 0; i < games.Count; i++) {
 
                         if (games[i].Platform == "PC") {
+
                             listaJogos.Add(games[i]);
                             //Console.WriteLine("add " + games[i].Name + " na lista");
                         }
@@ -48,16 +51,19 @@ namespace Ubibot.Modulos {
         static string GetStatus(int num) {
             API interno = new API();
             List<Jogos> listaJogos = (List<Jogos>)interno.ListarJogos();
-            if (listaJogos[num].Maintenance != null) 
+            if (listaJogos[num].Maintenance == "true")
                 return "MANUTENÇÃO! O servidor " + listaJogos[num].Name + " se encontra em manutenção.";
             else if (listaJogos[num].Status.ToString() == "Online") 
                 return "TUDO OK! O servidor " + listaJogos[num].Name + " está " + listaJogos[num].Status;
             else {
                 string problemas = null;
-                for (var i = 0; i <= listaJogos[num].ImpactedFeatures[i].Length; i++) {
-                    problemas += listaJogos[num].ImpactedFeatures[i] + " ";
+                foreach (var item in listaJogos[num].ImpactedFeatures) {
+                    problemas += "- " + item + "\n";
                 }
-                return "PROBLEMA! O servidor " + listaJogos[num].Name + " está apresentando problemas, afetando " + problemas;
+                /*for (var i = 0; i <= listaJogos[num].ImpactedFeatures[i].Length; i++) {
+                    problemas += listaJogos[num].ImpactedFeatures[i] + " ";
+                }*/
+                return "PROBLEMA! O servidor " + listaJogos[num].Name + " está apresentando problemas, afetando:\n" + problemas;
             }
         }
 
@@ -67,15 +73,16 @@ namespace Ubibot.Modulos {
             string off = null;
             string manutencao = null;
             for (var i = 0; i < listaJogos.Count; i++) {
-                if (listaJogos[i].Maintenance != null)
-                    manutencao += "[" + i + "]" + listaJogos[i].Name + " ";
+                if (listaJogos[i].Maintenance == "true")
+                    manutencao += "[" + i + "] " + listaJogos[i].Name + " ";
                 if (listaJogos[i].Status != "Online")
-                    off += "["+ i +"]" + listaJogos[i].Name + " ";
+                    off += "["+ i +"] " + listaJogos[i].Name + " ";
             }
             if (off == null && manutencao == null)
                 return "Nenhum servidor da Ubisoft se encontra offline.";
             else
-            return "Os servidores de " + off + " se encontram Offline!\nOs de " + manutencao + " estão em manutenção.";
+            return "Os servidores de " + off + " se encontram Offline!";
+            //WIP Refazer return pra manutenção
         }
 
         /*public async Task MonitorarAPI(DiscordSocketClient _client) {
@@ -86,11 +93,8 @@ namespace Ubibot.Modulos {
 
         public void MonitorarAPI(int id, SocketCommandContext contexto) {
             API interno = new API();
-            List<Jogos> listaJogos = (List<Jogos>)interno.ListarJogos();
-            List<Jogos> listaMonitora = new List<Jogos>();
-
-            listaMonitora.Add(listaJogos[id]);
-            contexto.Message.ReplyAsync("Agora monitorando " + listaMonitora[0].Name);
+            string jogo = monitor.Monitorar(id, interno);
+            contexto.Message.ReplyAsync("Agora monitorando " + jogo);
             
             // WIP
         }
