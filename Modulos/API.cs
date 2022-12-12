@@ -25,7 +25,6 @@ namespace Ubibot.Modulos {
                     List<Jogos> games = JsonConvert.DeserializeObject<List<Jogos>>(json);
 
                     List<Jogos> listaJogos = new List<Jogos>();
-                    //string[] listaJogos = null;
 
                     for (int i = 0; i < games.Count; i++) {
 
@@ -60,9 +59,6 @@ namespace Ubibot.Modulos {
                 foreach (var item in listaJogos[num].ImpactedFeatures) {
                     problemas += "- " + item + "\n";
                 }
-                /*for (var i = 0; i <= listaJogos[num].ImpactedFeatures[i].Length; i++) {
-                    problemas += listaJogos[num].ImpactedFeatures[i] + " ";
-                }*/
                 return "PROBLEMA! O servidor " + listaJogos[num].Name + " está apresentando problemas, afetando:\n" + problemas;
             }
         }
@@ -85,18 +81,12 @@ namespace Ubibot.Modulos {
             //WIP Refazer return pra manutenção
         }
 
-        /*public async Task MonitorarAPI(DiscordSocketClient _client) {
-            ulong id = 1051150445927731281;
-            var chnl = _client.GetChannel(id) as IMessageChannel;
-            await chnl.SendMessageAsync("Announcement!");
-        } */
-
-        public void MonitorarAPI(int id, SocketCommandContext contexto) {
+        public async void MonitorarAPI(int id, SocketCommandContext contexto) {
             API interno = new API();
-            string jogo = monitor.Monitorar(id, interno);
-            contexto.Message.ReplyAsync("Agora monitorando " + jogo);
+            List<Jogos> listaJogos = (List<Jogos>)interno.ListarJogos();
+            contexto.Message.ReplyAsync("Agora monitorando " + listaJogos[id].Name);
+            await monitor.Monitorar(id, interno, contexto);
             
-            // WIP
         }
 
 
