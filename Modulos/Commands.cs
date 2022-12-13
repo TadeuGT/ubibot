@@ -11,7 +11,7 @@ namespace Ubibot.Modulos {
 
         [Command("ping")]
         public async Task Ping() {
-            await ReplyAsync("Pong");
+            await Context.Message.ReplyAsync("Pong");
         }
 
         [Command("jogos")]
@@ -23,41 +23,34 @@ namespace Ubibot.Modulos {
             for (var i = 0; i < listaJogos.Count; i++) {
                 Console.WriteLine(listaJogos[i].Name);
                 resposta += i + " - " + listaJogos[i].Name + "\n";
-
-                /* if (resposta.Length > 1900)
-                    break; */
             }
 
-            int chunkSize = 2000;
+            int chunkSize = 1900;
             int stringLength = resposta.Length;
-            for (int i = 0; i < stringLength ; i += chunkSize)
-            {
+            for (int i = 0; i < stringLength ; i += chunkSize) {
                 if (i + chunkSize > stringLength) chunkSize = stringLength - i;
-                await ReplyAsync(resposta.Substring(i, chunkSize));
-
+                await Context.Message.ReplyAsync(resposta.Substring(i, chunkSize));
             }
-
-            //await ReplyAsync(resposta);
         }
 
         [Command("status")]
         public async Task Status(int num) {
             API a1 = new API();
-            await ReplyAsync(a1.GetJogos(num));
+            await Context.Message.ReplyAsync(a1.GetJogos(num));
         }
 
         [Command("offline")]
         public async Task Offline() {
             API a1 = new API();
-            await ReplyAsync(a1.GetStatusGeral());
+            await Context.Message.ReplyAsync(a1.GetStatusGeral());
         }
 
         [Command("monitorar")]
-        public async Task Monitorar(int id) {
+        public Task Monitorar(int id) {
             SocketCommandContext contexto = Context;
             API a1 = new API();
             a1.MonitorarAPI(id, contexto);
+            return Task.CompletedTask;
         }
-
     }
 }

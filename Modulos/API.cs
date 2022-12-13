@@ -51,15 +51,15 @@ namespace Ubibot.Modulos {
             API interno = new API();
             List<Jogos> listaJogos = (List<Jogos>)interno.ListarJogos();
             if (listaJogos[num].Maintenance == "true")
-                return "MANUTENÇÃO! O servidor " + listaJogos[num].Name + " se encontra em manutenção.";
+                return "***MANUTENÇÃO***! O servidor **" + listaJogos[num].Name + "** se encontra em manutenção.";
             else if (listaJogos[num].Status.ToString() == "Online") 
-                return "TUDO OK! O servidor " + listaJogos[num].Name + " está " + listaJogos[num].Status;
+                return "***TUDO OK***! O servidor de **" + listaJogos[num].Name + "** está **" + listaJogos[num].Status + "**";
             else {
                 string problemas = null;
                 foreach (var item in listaJogos[num].ImpactedFeatures) {
                     problemas += "- " + item + "\n";
                 }
-                return "PROBLEMA! O servidor " + listaJogos[num].Name + " está apresentando problemas, afetando:\n" + problemas;
+                return "***PROBLEMA***! O servidor de **" + listaJogos[num].Name + "** está apresentando problemas, afetando:\n" + problemas;
             }
         }
 
@@ -72,7 +72,7 @@ namespace Ubibot.Modulos {
                 if (listaJogos[i].Maintenance == "true")
                     manutencao += "[" + i + "] " + listaJogos[i].Name + " ";
                 if (listaJogos[i].Status != "Online")
-                    off += "["+ i +"] " + listaJogos[i].Name + " ";
+                    off += "[**"+ i +"**] " + listaJogos[i].Name + " ";
             }
             if (off == null && manutencao == null)
                 return "Nenhum servidor da Ubisoft se encontra offline.";
@@ -84,9 +84,8 @@ namespace Ubibot.Modulos {
         public async void MonitorarAPI(int id, SocketCommandContext contexto) {
             API interno = new API();
             List<Jogos> listaJogos = (List<Jogos>)interno.ListarJogos();
-            contexto.Message.ReplyAsync("Agora monitorando " + listaJogos[id].Name);
+            await contexto.Message.ReplyAsync("Agora monitorando **" + listaJogos[id].Name +"**");
             await monitor.Monitorar(id, interno, contexto);
-            
         }
 
 

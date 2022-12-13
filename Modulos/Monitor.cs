@@ -11,24 +11,25 @@ namespace Ubibot.Modulos {
     internal class Monitor : ModuleBase<SocketCommandContext> {
         static List<Jogos> listaMonitora = new List<Jogos>();
         static SocketCommandContext _Contexto;
-        //static List<Jogos> listaEstados = new List<Jogos>();
 
         public async Task Monitorar(int id, API interno, SocketCommandContext contexto) {
+            //Recebe o ID do jogo a ser monitorado, a instância da classe API para listar os jogos,
+            //e o Context do Discord para poder enviar mensagens no chat.
             _Contexto = contexto;
             List<Jogos> listaJogos = (List<Jogos>)interno.ListarJogos();
             listaMonitora.Add(listaJogos[id]);
-            
-            foreach (Jogos jogos in listaMonitora) {
+
+            /* foreach (Jogos jogos in listaMonitora) {
                 Console.WriteLine(jogos.Name);
-            }
+            }*/
 
-
-            Console.WriteLine("Iniciando atualizador");
+            Console.WriteLine("Atualizador Iniciado");
             await Task.Run(Atualizador);
         }
 
         async Task Atualizador() {
-            //Pegar AppID da Lista Monitora, e bater na API os Ids, comparando os status dos games
+            //Esta é uma task recursiva, que pega o AppID da Lista Monitora, e bate na API com o Status atual do app,
+            //comparando os status dos games para verificar se houve alteração.
             string extrairID = null;
             foreach (Jogos jogo in listaMonitora) {
                 extrairID += jogo.AppID.ToString() + ",";
@@ -45,19 +46,23 @@ namespace Ubibot.Modulos {
                     foreach (Jogos jogoMonitorado in listaMonitora) {
                         foreach (Jogos jogoAPI in liveAPI) {
                             if (jogoMonitorado.AppID == jogoAPI.AppID) {
-                                if (jogoMonitorado.Status == jogoAPI.Status) {
-                                    Console.WriteLine("Nada mudou em " + jogoMonitorado.Name + " " + jogoAPI.Name);
-                                    Console.WriteLine(_Contexto.Channel.Name);
-                                    await _Contexto.Channel.SendMessageAsync("Teste");
-                                    //WIP
+                                if (jogoMonitorado.Status != jogoAPI.Status) {
+                                    if (jogoAPI.Status != "Online")
+                                        await _Contexto.Channel.SendMessageAsync("QUEDA! " + jogoMonitorado.Name + " está passando por problemas de servidor:\n" +
+                                        "Status foi alterado de [" + jogoMonitorado.Status + "] para [" + jogoAPI.Status + "]");
+                                    else
+                                        await _Contexto.Channel.SendMessageAsync("RESOLVIDO! " + jogoMonitorado.Name + " voltou ao ar:\n" +
+                                        "Status foi alterado de [" + jogoMonitorado.Status + "] para [" + jogoAPI.Status + "]");
+                                    jogoMonitorado.Status = jogoAPI.Status;
                                 }
                             }
                         }
                     }
+
                 }
 
             }
-            await Task.Delay(TimeSpan.FromSeconds(60.0));
+            await Task.Delay(TimeSpan.FromSeconds(300.0));
             Console.WriteLine("Verificando atualizador...");
             await Task.Run(Atualizador);
         }
