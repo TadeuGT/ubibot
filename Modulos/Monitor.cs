@@ -9,22 +9,25 @@ using System.Threading.Tasks;
 
 namespace Ubibot.Modulos {
     internal class Monitor : ModuleBase<SocketCommandContext> {
-        static List<Jogos> listaMonitora = new List<Jogos>();
-        static SocketCommandContext _Contexto;
+        List<Jogos> listaMonitora = new List<Jogos>();
+        SocketCommandContext _Contexto;
 
         public async Task Monitorar(int id, API interno, SocketCommandContext contexto) {
             //Recebe o ID do jogo a ser monitorado, a instância da classe API para listar os jogos,
             //e o Context do Discord para poder enviar mensagens no chat.
-            _Contexto = contexto;
+            this._Contexto = contexto;
             List<Jogos> listaJogos = (List<Jogos>)interno.ListarJogos();
+
             listaMonitora.Add(listaJogos[id]);
 
             /* foreach (Jogos jogos in listaMonitora) {
                 Console.WriteLine(jogos.Name);
             }*/
 
+            if (listaMonitora.Count >= 1) {
             Console.WriteLine("Atualizador Iniciado");
             await Task.Run(Atualizador);
+            }
         }
 
         async Task Atualizador() {

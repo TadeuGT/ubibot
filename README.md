@@ -10,7 +10,9 @@
 - **!ping** - Testar resposta
 
 ## Features WIP:
-- O usuário poderá escolher a plataforma para monitorar (PC, Xbox, Playstation, Switch). Atualmente consulta apenas servidores de PC.
+- O usuário poderá escolher a plataforma para monitorar (PC, Xbox, Playstation, Switch, Luna) (Atualmente consulta apenas servidores de PC).
+- Validação de comandos e feedbacks de erro.
+- Validação de monitoramento para entradas repetidas.
 - Implementar Discord slash commands.
 - Implementar banco de dados.
 
